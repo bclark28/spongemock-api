@@ -1,47 +1,9 @@
-import random
+"""Convenience entry point for running the development server."""
 
-from flask import Flask, jsonify, request
+from spongemock_api import create_app
 
-app = Flask(__name__)
-
-
-@app.route('/spongemock', methods=["GET"])
-def mockText():
-    if validate_query(request):
-        string = request.args.get('text')
-        chars = [x for x in string.lower()]
-        mocked_string = []
-
-        for char in chars:
-            if random.randint(0, 1) > 0:
-                mocked_string.append(char.upper())
-            else:
-                mocked_string.append(char)
-
-        return jsonify({
-            "error": None,
-            "mockedText": "".join(mocked_string)
-        }), 200
-    else:
-        return jsonify(invalid_query()), 400
+app = create_app()
 
 
-def validate_query(request_data):
-    if request_data.args.get('text') is None:
-        return False
-
-    if type(request_data.args.get('text')) is not str:
-        return False
-
-    return True
-
-
-def invalid_query():
-    return {
-        "error": "query is not valid",
-        "mockedText": None
-    }
-
-
-if __name__ == '__main__':
-    app.run(port=5000)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)
